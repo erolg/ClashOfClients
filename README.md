@@ -15,7 +15,7 @@ func main() {
 	c := clashofclients.New()
 	mux := c.Serve()
 
-		mux.HandleFunc("/play", func(w http.ResponseWriter, req *http.Request) {
+	mux.HandleFunc("/play", func(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(w, "It works!")
 	})
 }
