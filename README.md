@@ -2,7 +2,7 @@
 Clash Of Clients
  Sample
  ```golang
- package main
+package main
 
 import (
 	"github.com/erolg/ClashOfClients"
