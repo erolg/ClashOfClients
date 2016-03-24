@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func (c *ClashOfClients) Serve() {
+func (c *ClashOfClients) Serve() *http.ServeMux {
 
 	n := negroni.Classic()
 
@@ -26,26 +26,29 @@ func (c *ClashOfClients) Serve() {
 		nickname := req.URL.Query().Get("nickname")
 		email := req.URL.Query().Get("email")
 
-		session, err := sessionStore.Get(req, c.Cfg.Name)
-		if err != nil {
-			panic(err)
-		}
-		if c.CheckNickName(nickname) {
-			fmt.Println("Bu nickname kullanılıyor yeni bir tane seç!")
+		if nickname == "" || email == "" {
+			fmt.Fprintf(w, "Lütfen mail ve nickname gönder")
+		} else if c.CheckNickName(nickname) {
+			fmt.Fprintf(w, "Bu nickname kullanılıyor yeni bir tane seç!")
 		} else {
-			session.Values["nickname"] = nickname
-			session.Values["email"] = email
-			var status string
-			session.Values["lastestGame"], status = c.CreateGameStore(nickname, email)
-			fmt.Println(session.Values["lastestGame"])
-			fmt.Println(status)
-			session.Options.MaxAge = c.Cfg.SessionMaxAge
-			if err := session.Save(req, w); err != nil {
+			session, err := sessionStore.Get(req, c.Cfg.Name)
+			if err != nil {
 				panic(err)
+			} else {
+				session.Values["nickname"] = nickname
+				session.Values["email"] = email
+				c.game.session, _ = c.CreateGameStore(nickname, email)
+				session.Values["lastestGame"] = c.game.session
+				session.Options.MaxAge = c.Cfg.SessionMaxAge
+				if err := session.Save(req, w); err != nil {
+					panic(err)
+				}
 			}
-		}
 
+		}
 	})
 	n.UseHandler(mux)
 	n.Run(":3000")
+
+	return mux
 }

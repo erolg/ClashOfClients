@@ -19,10 +19,26 @@ func (coc *ClashOfClients) CreateGameStore(nick string, email string) (string, s
 	defer p.Close()
 
 	hash := nick + "_" + strconv.FormatInt(time.Now().Unix(), 10)
-
+	p.Do("SADD", "nicknames", nick)
 	result, _ := redis.String(p.Do("HMSET", hash, "move_counter", 0, "email", email))
 
 	return hash, result
+}
+
+//TO-DO
+func (coc *ClashOfClients) Set() {
+	p := coc.redisPool.Get()
+	defer p.Close()
+
+	//result , _ := p.Do("HSET", coc.game.session, "", "")
+}
+
+func (coc *ClashOfClients) Get() {
+	p := coc.redisPool.Get()
+	defer p.Close()
+
+	//result, _ := p.Do("HGET", coc.game.session, "", "")
+
 }
 
 func (coc *ClashOfClients) CreateRedisPool() {

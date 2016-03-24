@@ -13,6 +13,7 @@ type Config struct {
 }
 
 type game struct {
+	session string
 }
 
 var defaults Config = Config{
