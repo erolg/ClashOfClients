@@ -1,7 +1,7 @@
 # ClashOfClients
 Clash Of Clients
  Sample
- ```golang
+ ```go
 package main
 
 import (
